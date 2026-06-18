@@ -1,0 +1,8 @@
+# devmaps não tem build step nem dependências.
+# Apenas ruído de SO e editores é ignorado.
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
