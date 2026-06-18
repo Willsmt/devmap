@@ -1,0 +1,417 @@
+/**
+ * widget.css — Design system base do devmaps.
+ *
+ * Reutilizável por todos os roadmaps e pela home. Mobile-first:
+ * o layout parte do smartphone e cresce com media queries.
+ * Tokens em :root para que cada roadmap possa sobrescrever a cor de acento.
+ */
+
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-2: #1c2330;
+  --border: #2d333b;
+  --text: #e6edf3;
+  --text-dim: #8b949e;
+  --accent: #6e9fff;
+  --accent-soft: rgba(110, 159, 255, 0.15);
+  --success: #3fb950;
+  --success-soft: rgba(63, 185, 80, 0.15);
+  --warn: #d29922;
+  --radius: 12px;
+  --gap: 16px;
+  --maxw: 880px;
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------- Cabeçalho ------------------------------- */
+
+.roadmap-header {
+  margin-bottom: 24px;
+}
+.roadmap-header h1 {
+  margin: 0 0 4px;
+  font-size: 1.6rem;
+}
+.roadmap-header p {
+  margin: 0;
+  color: var(--text-dim);
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* ------------------------------ Barra de XP ------------------------------ */
+
+.xp-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: var(--gap);
+}
+.xp-bar__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.xp-bar__level {
+  font-weight: 700;
+}
+.xp-bar__xp {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+.progress-track {
+  height: 10px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #9d7bff);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* ------------------------------- Stat cards ------------------------------ */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.stat-card__value {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.stat-card__label {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+/* -------------------------------- Badges --------------------------------- */
+
+.badges {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.badge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 8px;
+  text-align: center;
+  opacity: 0.4;
+  filter: grayscale(1);
+  transition: opacity 0.3s, filter 0.3s, transform 0.2s;
+}
+.badge--unlocked {
+  opacity: 1;
+  filter: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft);
+}
+.badge__icon {
+  font-size: 1.8rem;
+  display: block;
+}
+.badge__name {
+  font-size: 0.75rem;
+  margin-top: 4px;
+  color: var(--text-dim);
+}
+.badge--unlocked .badge__name {
+  color: var(--text);
+}
+
+/* -------------------------------- Fases ---------------------------------- */
+
+.section-title {
+  font-size: 1.1rem;
+  margin: 0 0 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.phase {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: var(--gap);
+  overflow: hidden;
+}
+.phase--active {
+  border-left-color: var(--accent);
+}
+.phase--done {
+  border-left-color: var(--success);
+}
+
+.phase__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.phase__head:hover {
+  background: var(--surface-2);
+}
+.phase__chevron {
+  transition: transform 0.2s;
+  color: var(--text-dim);
+}
+.phase--open .phase__chevron {
+  transform: rotate(90deg);
+}
+.phase__title {
+  flex: 1;
+  min-width: 0;
+}
+.phase__title h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.phase__meta {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.phase__count {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.phase__progress {
+  padding: 0 16px 12px;
+}
+.phase__progress .progress-track {
+  height: 6px;
+}
+
+.phase__body {
+  display: none;
+  padding: 0 16px 16px;
+}
+.phase--open .phase__body {
+  display: block;
+}
+
+/* -------------------------------- Tópicos -------------------------------- */
+
+.topic {
+  border-top: 1px solid var(--border);
+  padding: 14px 0;
+}
+.topic__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.topic__checkbox {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--success);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.topic__main {
+  flex: 1;
+  min-width: 0;
+}
+.topic__name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.topic__xp {
+  font-size: 0.72rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-weight: 600;
+}
+.topic--done .topic__name {
+  color: var(--text-dim);
+  text-decoration: line-through;
+}
+.topic__desc {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+.topic__note {
+  width: 100%;
+  margin-top: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  resize: vertical;
+  min-height: 38px;
+}
+.topic__note:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ----------------------------- Marco da fase ----------------------------- */
+
+.milestone {
+  margin-top: 16px;
+  background: var(--success-soft);
+  border: 1px solid var(--success);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 0.92rem;
+}
+.milestone strong {
+  color: var(--success);
+}
+
+/* -------------------------- Estados de feedback -------------------------- */
+
+.notice {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-bottom: var(--gap);
+}
+.notice strong {
+  color: var(--warn);
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 48px 0;
+}
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --------------------------------- Home ---------------------------------- */
+
+.home-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.home-header h1 {
+  font-size: 2rem;
+  margin: 0 0 8px;
+}
+.home-header p {
+  color: var(--text-dim);
+  margin: 0;
+}
+.roadmap-list {
+  display: grid;
+  gap: var(--gap);
+}
+.roadmap-card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.roadmap-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+.roadmap-card h2 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+.roadmap-card p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+}
+.site-footer {
+  margin-top: 48px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+/* ------------------------------ Responsivo ------------------------------- */
+
+@media (min-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .roadmap-header h1 {
+    font-size: 2rem;
+  }
+}
