@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>devmaps · roadmaps interativos para devs</title>
+    <link rel="stylesheet" href="./core/widget.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="home-header">
+        <h1>devmaps</h1>
+        <p>Roadmaps interativos para acompanhar sua evolução como dev.</p>
+      </header>
+
+      <div class="roadmap-list" id="list">
+        <div class="loading"><div class="spinner"></div>Carregando roadmaps…</div>
+      </div>
+
+      <footer class="site-footer">
+        Open source · faça fork e crie o seu ·
+        <a href="https://github.com">contribua</a>
+      </footer>
+    </div>
+
+    <!--
+      Sites estáticos não conseguem listar pastas sozinhos, então mantemos um
+      registro explícito das pastas de roadmap. O título e o subtítulo vêm do
+      config.js de cada roadmap (fonte única). Adicionar um roadmap à home =
+      acrescentar uma string a este array.
+    -->
+    <script type="module">
+      const ROADMAPS = ['arquitetura-software'];
+
+      const list = document.getElementById('list');
+
+      const cards = await Promise.all(
+        ROADMAPS.map(async (slug) => {
+          try {
+            const { default: config } = await import(`./roadmaps/${slug}/config.js`);
+            return card(slug, config.title, config.subtitle);
+          } catch {
+            return card(slug, slug, 'Roadmap indisponível.');
+          }
+        })
+      );
+
+      list.innerHTML = cards.join('') || '<p class="notice">Nenhum roadmap ainda.</p>';
+
+      function card(slug, title, subtitle) {
+        return `<a class="roadmap-card" href="./roadmaps/${slug}/index.html">
+            <h2>${title}</h2>
+            <p>${subtitle}</p>
+          </a>`;
+      }
+    </script>
+  </body>
+</html>
