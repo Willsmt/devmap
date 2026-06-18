@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arquitetura de Software · devmaps</title>
+    <link rel="stylesheet" href="../../core/widget.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a class="back-link" href="../../index.html">← Todos os roadmaps</a>
+
+      <!-- O JS monta tudo aqui dentro. Começa em estado de loading. -->
+      <div id="app">
+        <div class="loading">
+          <div class="spinner"></div>
+          Carregando seu progresso…
+        </div>
+      </div>
+    </div>
+
+    <!--
+      index.html apenas orquestra: importa os módulos, monta o DOM e trata
+      eventos. Toda a regra de negócio vem do engine; toda a persistência,
+      do adapter sheets. Este arquivo não calcula XP nem decide badges.
+    -->
+    <script type="module">
+      import config from './config.js';
+      import data from './data.js';
+      import {
+        computeXP,
+        computeLevel,
+        computeProgress,
+        computePhaseProgress,
+        countActivePhases,
+        evaluateBadges,
+      } from '../../core/engine.js';
+      import { load, saveProgress, saveNote, isConfigured } from '../../core/sheets.js';
+
+      const app = document.getElementById('app');
+
+      // Estado local da sessão. checked = ids concluídos; notes = anotações.
+      const checked = new Set();
+      const notes = new Map();
+
+      init();
+
+      async function init() {
+        const { progress, notes: loadedNotes } = await load(config, config.id);
+        progress.filter((p) => p.checked).forEach((p) => checked.add(p.topicId));
+        loadedNotes.forEach((n) => notes.set(n.topicId, n.note));
+        render();
+      }
+
+      /* ----------------------------- Render ----------------------------- */
+
+      function render() {
+        app.innerHTML = '';
+        app.appendChild(header());
+        if (!isConfigured(config)) app.appendChild(notice());
+        app.appendChild(xpBar());
+        app.appendChild(statsGrid());
+        app.appendChild(badgesGrid());
+        app.appendChild(phasesSection());
+        update();
+      }
+
+      function header() {
+        const el = document.createElement('header');
+        el.className = 'roadmap-header';
+        el.innerHTML = `<h1>${config.title}</h1><p>${config.subtitle}</p>`;
+        return el;
+      }
+
+      function notice() {
+        const el = document.createElement('div');
+        el.className = 'notice';
+        el.innerHTML =
+          '<strong>Modo local.</strong> O Google Sheets não está configurado, ' +
+          'então seu progresso fica salvo apenas neste navegador. ' +
+          'Veja o README para sincronizar entre dispositivos.';
+        return el;
+      }
+
+      function xpBar() {
+        const el = document.createElement('div');
+        el.className = 'xp-bar';
+        el.innerHTML = `
+          <div class="xp-bar__head">
+            <span class="xp-bar__level" data-level></span>
+            <span class="xp-bar__xp" data-xp></span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" data-xp-fill></div></div>`;
+        return el;
+      }
+
+      function statsGrid() {
+        const el = document.createElement('div');
+        el.className = 'stats';
+        el.innerHTML = `
+          ${statCard('completed', 'Concluídos')}
+          ${statCard('total', 'Total')}
+          ${statCard('active', 'Fases ativas')}
+          ${statCard('level', 'Nível')}`;
+        return el;
+      }
+
+      function statCard(key, label) {
+        return `<div class="stat-card">
+            <div class="stat-card__value" data-stat="${key}">0</div>
+            <div class="stat-card__label">${label}</div>
+          </div>`;
+      }
+
+      function badgesGrid() {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = `<h2 class="section-title">Conquistas</h2>`;
+        const grid = document.createElement('div');
+        grid.className = 'badges';
+        data.badges.forEach((badge) => {
+          const b = document.createElement('div');
+          b.className = 'badge';
+          b.dataset.badge = badge.id;
+          b.title = badge.desc;
+          b.innerHTML = `<span class="badge__icon">${badge.icon}</span>
+            <span class="badge__name">${badge.name}</span>`;
+          grid.appendChild(b);
+        });
+        wrap.appendChild(grid);
+        return wrap;
+      }
+
+      function phasesSection() {
+        const wrap = document.createElement('div');
+        wrap.innerHTML = `<h2 class="section-title">Jornada</h2>`;
+        data.phases.forEach((phase) => wrap.appendChild(phaseEl(phase)));
+        return wrap;
+      }
+
+      function phaseEl(phase) {
+        const el = document.createElement('section');
+        el.className = 'phase';
+        el.dataset.phase = phase.id;
+        el.innerHTML = `
+          <div class="phase__head">
+            <span class="phase__chevron">▶</span>
+            <div class="phase__title">
+              <h3>${phase.title}</h3>
+              <span class="phase__meta">${phase.level} · ${phase.duration}</span>
+            </div>
+            <span class="phase__count" data-phase-count></span>
+          </div>
+          <div class="phase__progress">
+            <div class="progress-track"><div class="progress-fill" data-phase-fill></div></div>
+          </div>
+          <div class="phase__body"></div>`;
+
+        el.querySelector('.phase__head').addEventListener('click', () =>
+          el.classList.toggle('phase--open')
+        );
+
+        const body = el.querySelector('.phase__body');
+        phase.topics.forEach((topic) => body.appendChild(topicEl(topic)));
+
+        const milestone = document.createElement('div');
+        milestone.className = 'milestone';
+        milestone.innerHTML = `<strong>Marco:</strong> ${phase.milestone}`;
+        body.appendChild(milestone);
+
+        return el;
+      }
+
+      function topicEl(topic) {
+        const el = document.createElement('div');
+        el.className = 'topic';
+        el.dataset.topic = topic.id;
+        el.innerHTML = `
+          <div class="topic__row">
+            <input type="checkbox" class="topic__checkbox" />
+            <div class="topic__main">
+              <div class="topic__name">${topic.name}
+                <span class="topic__xp">+${topic.xp} XP</span>
+              </div>
+              <div class="topic__desc">${topic.desc}</div>
+              <textarea class="topic__note" placeholder="Anotações sobre ${topic.name}…"></textarea>
+            </div>
+          </div>`;
+
+        const checkbox = el.querySelector('.topic__checkbox');
+        checkbox.checked = checked.has(topic.id);
+        checkbox.addEventListener('change', () => onToggle(topic.id, checkbox.checked));
+
+        const note = el.querySelector('.topic__note');
+        note.value = notes.get(topic.id) || '';
+        note.addEventListener('blur', () => onNote(topic.id, note.value));
+
+        return el;
+      }
+
+      /* ----------------------------- Eventos ----------------------------- */
+
+      function onToggle(topicId, isChecked) {
+        if (isChecked) checked.add(topicId);
+        else checked.delete(topicId);
+        update();
+        saveProgress(config, config.id, topicId, isChecked);
+      }
+
+      function onNote(topicId, value) {
+        const trimmed = value.trim();
+        if (notes.get(topicId) === trimmed) return;
+        notes.set(topicId, trimmed);
+        saveNote(config, config.id, topicId, trimmed);
+      }
+
+      /* --------- Atualiza tudo que deriva do estado (via engine) --------- */
+
+      function update() {
+        const xp = computeXP(data, checked);
+        const level = computeLevel(xp);
+        const progress = computeProgress(data, checked);
+
+        app.querySelector('[data-level]').textContent = `Nível ${level.level}`;
+        app.querySelector('[data-xp]').textContent =
+          `${xp} XP · ${level.xpIntoLevel}/${level.xpForNextLevel} p/ próximo`;
+        app.querySelector('[data-xp-fill]').style.width = `${level.progressPct}%`;
+
+        setStat('completed', progress.completed);
+        setStat('total', progress.total);
+        setStat('active', countActivePhases(data, checked));
+        setStat('level', level.level);
+
+        evaluateBadges(data, checked).forEach((badge) => {
+          const el = app.querySelector(`[data-badge="${badge.id}"]`);
+          el.classList.toggle('badge--unlocked', badge.unlocked);
+        });
+
+        data.phases.forEach((phase) => {
+          const pp = computePhaseProgress(phase, checked);
+          const el = app.querySelector(`[data-phase="${phase.id}"]`);
+          el.classList.toggle('phase--active', pp.status === 'active');
+          el.classList.toggle('phase--done', pp.status === 'done');
+          el.querySelector('[data-phase-count]').textContent = `${pp.completed}/${pp.total}`;
+          el.querySelector('[data-phase-fill]').style.width = `${pp.pct}%`;
+          phase.topics.forEach((topic) => {
+            el.querySelector(`[data-topic="${topic.id}"]`)
+              .classList.toggle('topic--done', checked.has(topic.id));
+          });
+        });
+      }
+
+      function setStat(key, value) {
+        app.querySelector(`[data-stat="${key}"]`).textContent = value;
+      }
+    </script>
+  </body>
+</html>
