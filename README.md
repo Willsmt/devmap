@@ -7,8 +7,11 @@ aprendizado pessoal: progresso persistido, XP, níveis, badges e deploy gratuito
 no GitHub Pages. **Sem npm, sem framework, sem servidor** — HTML, CSS e
 JavaScript puro com ESModules nativos.
 
-O primeiro roadmap incluído é **Arquitetura de Software com Python** (5 fases,
-20 tópicos, 7 badges).
+![Roadmap "Arquitetura de Software com IA" — tema neon, totalmente personalizado via CSS](docs/roadmap-ia.png)
+
+Vem com roadmaps de exemplo prontos — incluindo **Arquitetura de Software com
+IA**, uma vitrine de personalização total: o mesmo motor dos outros, com um
+visual completamente diferente (tema neon, efeitos 100% em CSS).
 
 ---
 
@@ -182,6 +185,8 @@ espaçamento e arredondamento no `:root`. Há dois níveis de customização:
 O roadmap **Arquitetura de Software com IA** é um exemplo vivo de todos esses
 níveis juntos (`theme` + `stylesheet` + `cardGradient`) — compare-o com os
 outros para ver a mesma estrutura com uma cara totalmente diferente.
+
+![Cada card da home herda a identidade visual do seu roadmap](docs/home.png)
 
 > **Atenção:** se o design que você quer copiar depende de **efeitos em JS**
 > (animações por script, interações, comportamento dinâmico), só CSS não basta —
