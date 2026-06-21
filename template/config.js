@@ -14,6 +14,11 @@ export default {
   // Uma linha descrevendo o roadmap.
   subtitle: 'Descreva aqui o objetivo do seu roadmap.',
 
+  // Identidade do card na HOME (opcional). Por padrão o card usa o accent do
+  // `theme` abaixo. Para um card com gradiente próprio, defina cardGradient:
+  // cardAccent: '#a371f7',
+  // cardGradient: 'linear-gradient(110deg, #22d3ee, #a855f7, #ec4899)',
+
   // URL do Web App do Apps Script (termina em /exec).
   // Deixe "" para salvar apenas no localStorage. Veja o README.
   scriptUrl: '',

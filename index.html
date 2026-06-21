@@ -38,17 +38,34 @@
         ROADMAPS.map(async (slug) => {
           try {
             const { default: config } = await import(`./roadmaps/${slug}/config.js`);
-            return card(slug, config.title, config.subtitle);
+            return card(slug, config);
           } catch {
-            return card(slug, slug, 'Roadmap indisponível.');
+            return card(slug, { title: slug, subtitle: 'Roadmap indisponível.' });
           }
         })
       );
 
       list.innerHTML = cards.join('') || '<p class="notice">Nenhum roadmap ainda.</p>';
 
-      function card(slug, title, subtitle) {
-        return `<a class="roadmap-card" href="./roadmaps/${slug}/index.html">
+      // Cada card herda a identidade visual do próprio roadmap: a cor de acento
+      // do theme (ou um gradiente em cardGradient) tinge a barra lateral, o
+      // título e o brilho do hover. Assim dá para "sentir" a customização já na
+      // home, sem precisar entrar no roadmap.
+      function card(slug, config) {
+        const title = config.title || slug;
+        const subtitle = config.subtitle || '';
+        const accent = config.cardAccent || (config.theme && config.theme.accent) || '';
+        const gradient = config.cardGradient || '';
+        const vars = [
+          accent && `--card-accent:${accent}`,
+          gradient && `--card-gradient:${gradient}`,
+        ]
+          .filter(Boolean)
+          .join(';');
+        const cls = 'roadmap-card' + (gradient ? ' roadmap-card--gradient' : '');
+        return `<a class="${cls}" href="./roadmaps/${slug}/index.html"${
+          vars ? ` style="${vars}"` : ''
+        }>
             <h2>${title}</h2>
             <p>${subtitle}</p>
           </a>`;

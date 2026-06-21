@@ -11,6 +11,11 @@ export default {
   id: 'arquitetura-software-ia',
   title: 'Arquitetura de Software com IA',
   subtitle: 'Projete sistemas que usam IA de verdade — de LLMs e RAG a agentes em produção.',
+
+  // Identidade visual do card na home (opcional). Aqui o mesmo gradiente neon
+  // da página, para a home já entregar a "cara" do roadmap.
+  cardGradient: 'linear-gradient(110deg, #22d3ee, #a855f7 55%, #ec4899)',
+
   scriptUrl:
     'https://script.google.com/macros/s/AKfycbwVjP78qMRMP6GuP9LEWC_xBj8aKIdQFb-3MrY88PwyhQIMsBmTTBZiMn3lOZoUuvxp/exec',
 

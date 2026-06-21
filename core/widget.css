@@ -439,22 +439,46 @@ a:hover {
   gap: var(--gap);
 }
 .roadmap-card {
+  --card-accent: var(--accent);
+  position: relative;
   display: block;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px;
-  transition: border-color 0.2s, transform 0.15s;
+  padding: 20px 20px 20px 24px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+/* Barra de acento à esquerda, na identidade do roadmap. */
+.roadmap-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--card-accent);
+}
+.roadmap-card--gradient::before {
+  background: var(--card-gradient);
 }
 .roadmap-card:hover {
-  border-color: var(--accent);
+  border-color: var(--card-accent);
   transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
   text-decoration: none;
 }
 .roadmap-card h2 {
   margin: 0 0 4px;
   font-size: 1.2rem;
   color: var(--text);
+}
+/* Roadmaps com gradiente próprio ganham título holográfico já na home. */
+.roadmap-card--gradient h2 {
+  background: var(--card-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 .roadmap-card p {
   margin: 0;
