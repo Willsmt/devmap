@@ -255,9 +255,9 @@ a:hover {
   gap: 12px;
 }
 .topic__checkbox {
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
+  width: 24px;
+  height: 24px;
+  margin-top: 0;
   accent-color: var(--success);
   flex-shrink: 0;
   cursor: pointer;
@@ -413,5 +413,12 @@ a:hover {
   }
   .roadmap-header h1 {
     font-size: 2rem;
+  }
+}
+
+/* Tablet+: a home aproveita a largura com 2 colunas de cards. */
+@media (min-width: 720px) {
+  .roadmap-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
