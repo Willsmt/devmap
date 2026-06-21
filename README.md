@@ -192,6 +192,49 @@ outros para ver a mesma estrutura com uma cara totalmente diferente.
 
 ---
 
+## FAQ
+
+**Preciso saber programar para criar meu roadmap?**
+Não. O conteúdo fica em `data.js`, que é só dados (fases, tópicos, badges). Edite
+à mão seguindo o exemplo, ou peça para uma IA gerar com o prompt em
+[`template/PROMPT_CLAUDE.md`](template/PROMPT_CLAUDE.md).
+
+**Onde meu progresso fica salvo?**
+Por padrão, no `localStorage` do navegador (só naquele aparelho). Se você
+configurar uma planilha e conectar com seu token, ele sincroniza no Google Sheets
+e aparece em qualquer dispositivo.
+
+**Se o site é público, outras pessoas conseguem ver ou bagunçar meu progresso?**
+Não. Cada navegador tem um `userId` anônimo próprio, então o progresso de cada um
+fica separado. E gravar na sua planilha exige o **token** — quem não tem usa o
+site em modo local e nunca toca nos seus dados.
+
+**Preciso de uma planilha nova para cada roadmap?**
+Não. Uma planilha serve para todos: o backend separa os dados por `roadmapId`.
+Use a mesma `scriptUrl` em todos os `config.js`.
+
+**É de graça?**
+Sim. GitHub Pages hospeda o site e Google Sheets + Apps Script fazem o backend —
+tudo no plano gratuito.
+
+**Dá para usar no celular?**
+Sim. Depois de publicar, abra o site no celular e cole seu token uma vez na barra
+de sincronização. O progresso passa a sincronizar entre todos os aparelhos.
+
+**Posso mudar só as cores ou o visual inteiro?**
+Os dois. `theme` troca cores/espaçamento; `stylesheet` reestiliza tudo (layout,
+animações); `cardGradient` muda o card na home. Veja "Personalizando o visual".
+
+**Esqueci/quero trocar meu token. E agora?**
+Atualize a propriedade `SCRIPT_TOKEN` no Apps Script e reconecte nos seus
+dispositivos com o novo valor. O progresso já salvo na planilha continua lá.
+
+**Funciona sem internet?**
+O modo local funciona offline (salva no navegador). A sincronização com a
+planilha precisa de conexão.
+
+---
+
 ## Licença
 
 MIT.
