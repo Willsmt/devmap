@@ -10,7 +10,17 @@
  *   progress → userId | roadmapId | topicId | checked | updatedAt
  *   notes    → userId | roadmapId | topicId | note    | updatedAt
  *
- * Não há autenticação: o userId é um UUID anônimo gerado no navegador.
+ * AUTENTICAÇÃO POR TOKEN
+ * Toda leitura e gravação exige um token compartilhado. Defina-o assim:
+ *   No editor do Apps Script → Configurações do projeto (engrenagem) →
+ *   Propriedades do script → adicione a propriedade SCRIPT_TOKEN com um
+ *   valor secreto (qualquer string longa e aleatória).
+ * Esse valor NÃO vai para o repositório. Cada dispositivo seu cola o mesmo
+ * token na barra de sincronização do site. Quem não tem o token recebe
+ * "unauthorized" e o front cai no modo local — ninguém escreve na sua planilha.
+ *
+ * O userId continua sendo um UUID anônimo gerado no navegador; ele apenas
+ * separa linhas de eventuais usuários distintos que compartilhem o token.
  */
 
 var SHEETS = {
@@ -18,11 +28,20 @@ var SHEETS = {
   notes: ['userId', 'roadmapId', 'topicId', 'note', 'updatedAt'],
 };
 
-/** GET ?action=load&userId=UUID&roadmapId=ID → { progress, notes }. */
+/** Confere o token recebido contra o SCRIPT_TOKEN das propriedades do script. */
+function tokenOk(provided) {
+  var expected = PropertiesService.getScriptProperties().getProperty('SCRIPT_TOKEN');
+  return Boolean(expected) && provided === expected;
+}
+
+/** GET ?action=load&userId=UUID&roadmapId=ID&token=TOKEN → { progress, notes }. */
 function doGet(e) {
   var params = (e && e.parameter) || {};
   if (params.action !== 'load') {
     return json({ error: 'unknown action' });
+  }
+  if (!tokenOk(params.token)) {
+    return json({ error: 'unauthorized' });
   }
   var userId = params.userId;
   var roadmapId = params.roadmapId;
@@ -43,6 +62,10 @@ function doPost(e) {
     body = JSON.parse(e.postData.contents);
   } catch (err) {
     return json({ success: false, error: 'invalid json' });
+  }
+
+  if (!tokenOk(body.token)) {
+    return json({ success: false, error: 'unauthorized' });
   }
 
   if (body.action === 'saveProgress') {

@@ -12,6 +12,7 @@
  */
 
 const UID_KEY = 'devmaps_uid';
+const TOKEN_KEY = 'devmaps_token';
 
 /** Gera/recupera o UUID v4 anônimo do usuário, persistido no localStorage. */
 export function getUserId() {
@@ -23,9 +24,29 @@ export function getUserId() {
   return uid;
 }
 
-/** Há uma URL de Apps Script válida em config? */
-export function isConfigured(config) {
+/**
+ * Token de sincronização. É o "segredo" que autoriza ler/gravar na planilha.
+ * Mora só no localStorage deste dispositivo — nunca no código nem no Git.
+ * Quem não tem o token correto cai no modo local e não toca na sua planilha.
+ */
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY) || '';
+}
+
+/** Salva (ou limpa, se vazio) o token deste dispositivo. */
+export function setToken(token) {
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+  else localStorage.removeItem(TOKEN_KEY);
+}
+
+/** Este roadmap aponta para alguma planilha (Apps Script)? */
+export function hasBackend(config) {
   return Boolean(config && config.scriptUrl && config.scriptUrl.trim());
+}
+
+/** Dá para sincronizar AGORA? Precisa de backend configurado e token salvo. */
+export function isConfigured(config) {
+  return hasBackend(config) && Boolean(getToken());
 }
 
 /* ----------------------------- localStorage ----------------------------- */
@@ -63,10 +84,11 @@ export async function load(config, roadmapId) {
       url.searchParams.set('action', 'load');
       url.searchParams.set('userId', getUserId());
       url.searchParams.set('roadmapId', roadmapId);
+      url.searchParams.set('token', getToken());
       const res = await fetch(url.toString());
       const data = await res.json();
       if (data && !data.error) {
-        return { progress: data.progress || [], notes: data.notes || [] };
+        return { progress: data.progress || [], notes: data.notes || [], synced: true };
       }
     } catch {
       /* cai para o fallback abaixo */
@@ -75,6 +97,7 @@ export async function load(config, roadmapId) {
   return {
     progress: readLocal(roadmapId, 'progress'),
     notes: readLocal(roadmapId, 'notes'),
+    synced: false,
   };
 }
 
@@ -83,7 +106,7 @@ async function post(config, payload) {
   try {
     const res = await fetch(config.scriptUrl, {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ ...payload, token: getToken() }),
     });
     const data = await res.json();
     return Boolean(data && data.success);

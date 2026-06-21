@@ -337,6 +337,69 @@ a:hover {
   color: var(--warn);
 }
 
+/* ---------------------------- Barra de sync ----------------------------- */
+
+.sync-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: var(--gap);
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sync-bar--ok {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.sync-bar--ok strong {
+  color: var(--success);
+}
+.sync-bar__warn {
+  color: var(--warn);
+}
+.sync-bar__row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.sync-bar__input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  min-width: 200px;
+  flex: 1;
+}
+.sync-bar__input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.sync-bar button {
+  background: var(--accent);
+  color: #0d1117;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sync-bar button:hover {
+  filter: brightness(1.08);
+}
+
 .loading {
   text-align: center;
   color: var(--text-dim);

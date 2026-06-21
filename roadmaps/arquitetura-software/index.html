@@ -35,18 +35,23 @@
         countActivePhases,
         evaluateBadges,
       } from '../../core/engine.js';
-      import { load, saveProgress, saveNote, isConfigured } from '../../core/sheets.js';
+      import { load, saveProgress, saveNote, setToken } from '../../core/sheets.js';
+      import { syncBar } from '../../core/sync-ui.js';
 
       const app = document.getElementById('app');
 
       // Estado local da sessão. checked = ids concluídos; notes = anotações.
       const checked = new Set();
       const notes = new Map();
+      let synced = false;
 
       init();
 
       async function init() {
-        const { progress, notes: loadedNotes } = await load(config, config.id);
+        checked.clear();
+        notes.clear();
+        const { progress, notes: loadedNotes, synced: s } = await load(config, config.id);
+        synced = s;
         progress.filter((p) => p.checked).forEach((p) => checked.add(p.topicId));
         loadedNotes.forEach((n) => notes.set(n.topicId, n.note));
         render();
@@ -57,7 +62,18 @@
       function render() {
         app.innerHTML = '';
         app.appendChild(header());
-        if (!isConfigured(config)) app.appendChild(notice());
+        app.appendChild(
+          syncBar(config, synced, {
+            onConnect: (token) => {
+              setToken(token);
+              init();
+            },
+            onDisconnect: () => {
+              setToken('');
+              init();
+            },
+          })
+        );
         app.appendChild(xpBar());
         app.appendChild(statsGrid());
         app.appendChild(badgesGrid());
@@ -69,16 +85,6 @@
         const el = document.createElement('header');
         el.className = 'roadmap-header';
         el.innerHTML = `<h1>${config.title}</h1><p>${config.subtitle}</p>`;
-        return el;
-      }
-
-      function notice() {
-        const el = document.createElement('div');
-        el.className = 'notice';
-        el.innerHTML =
-          '<strong>Modo local.</strong> O Google Sheets não está configurado, ' +
-          'então seu progresso fica salvo apenas neste navegador. ' +
-          'Veja o README para sincronizar entre dispositivos.';
         return el;
       }
 

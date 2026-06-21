@@ -15,13 +15,18 @@ O primeiro roadmap incluído é **Arquitetura de Software com Python** (5 fases,
 ## Como funciona
 
 - O widget marca tópicos, calcula XP/nível e desbloqueia badges.
-- O progresso é salvo no **Google Sheets** (via Google Apps Script) e fica
-  ligado a um `userId` anônimo (UUID) guardado no seu navegador.
-- Se você não configurar o Sheets, tudo funciona igual usando **localStorage**
-  — só não sincroniza entre dispositivos. Nada quebra.
+- O progresso é salvo no **Google Sheets** (via Google Apps Script), ligado a
+  um `userId` anônimo (UUID) guardado no seu navegador.
+- A sincronização é protegida por um **token**: o backend só lê/grava se a
+  requisição trouxer o token correto (que você define em `SCRIPT_TOKEN`). Por
+  isso o site pode ser público — quem não tem o token usa normalmente, mas o
+  progresso fica só no navegador dele e **ninguém escreve na sua planilha**.
+- Sem `scriptUrl` ou sem token, tudo funciona igual usando **localStorage** —
+  só não sincroniza entre dispositivos. Nada quebra.
 
 ```
-core/      → engine.js (lógica pura), sheets.js (persistência), widget.css
+core/      → engine.js (lógica pura), sheets.js (persistência),
+             sync-ui.js (barra de sync), widget.css
 roadmaps/  → um roadmap por pasta (index.html + config.js + data.js)
 template/  → base para criar um roadmap novo
 sheets/    → Code.gs, o backend em Google Apps Script
@@ -58,7 +63,19 @@ No editor do Apps Script: **Implantar → Nova implantação → App da Web**.
 
 Copie a URL gerada (termina em `/exec`).
 
-### 4. Cole a URL no config do roadmap
+### 4. Defina seu token de sincronização
+
+Ainda no editor do Apps Script: **engrenagem (Configurações do projeto) →
+Propriedades do script → Adicionar propriedade**.
+
+- **Propriedade:** `SCRIPT_TOKEN`
+- **Valor:** uma senha longa e aleatória (gere uma com um gerenciador de senhas)
+
+Esse token é o segredo que autoriza ler e gravar na sua planilha. Ele **não vai
+para o repositório** — fica só aqui e no seu navegador. Sem ele, qualquer
+visitante do site cai no modo local e nunca escreve nos seus dados.
+
+### 5. Cole a URL no config do roadmap
 
 Em `roadmaps/arquitetura-software/config.js`, preencha `scriptUrl`:
 
@@ -71,7 +88,10 @@ export default {
 };
 ```
 
-### 5. Faça commit e push
+A **mesma** `scriptUrl` serve para todos os roadmaps — o backend separa os dados
+por `roadmapId`. Como o token protege a gravação, dá para commitar a URL sem medo.
+
+### 6. Faça commit e push
 
 ```bash
 git add .
@@ -80,7 +100,13 @@ git push
 ```
 
 O GitHub Actions publica em `https://<seu-usuario>.github.io/<repo>/`.
-Pronto: marque um tópico e o progresso persiste. 🎉
+
+### 7. Conecte seus dispositivos
+
+Abra o site no PC e no celular. Na **barra de sincronização** no topo do
+roadmap, cole o seu `SCRIPT_TOKEN` e clique em **Conectar**. O token fica salvo
+naquele navegador e o progresso passa a sincronizar entre todos os aparelhos
+conectados. 🎉
 
 ---
 
@@ -94,7 +120,8 @@ python -m http.server 8000
 # então abra http://localhost:8000/
 ```
 
-Sem `scriptUrl`, o progresso fica no localStorage do navegador.
+Sem `scriptUrl` (ou sem token conectado), o progresso fica no localStorage do
+navegador.
 
 ---
 
