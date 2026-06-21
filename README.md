@@ -150,8 +150,28 @@ espaçamento e arredondamento no `:root`. Há dois níveis de customização:
   };
   ```
 
-Quer um tema novo? Peça uma paleta para uma IA, cole o objeto `theme` no config
-e pronto — só aquele roadmap muda.
+- **Restyle completo de um roadmap** (layout, cards, animações — não só cor):
+  dê a ele uma folha de estilo própria com `stylesheet` no config. Ela é
+  carregada depois do `widget.css`, então sobrescreve o que quiser, usando os
+  nomes de classe como contrato (`.phase`, `.topic`, `.badge`, `.xp-bar`...):
+
+  ```js
+  export default {
+    id: 'meu-roadmap',
+    // ...
+    stylesheet: './estilo.css',
+  };
+  ```
+
+  Há um [`template/estilo.css`](template/estilo.css) de exemplo para começar.
+  Peça um CSS para uma IA, salve na pasta do roadmap, aponte no config e pronto.
+
+> **Atenção:** se o design que você quer copiar depende de **efeitos em JS**
+> (animações por script, interações, comportamento dinâmico), só CSS não basta —
+> aí você vai mexer também nas funções de render do `index.html` do roadmap, e
+> isso muda bem mais que o estilo. Dica: **esgote o que dá para fazer só com CSS**
+> (transições, `@keyframes`, `:hover`/`:focus`, grid/flex, `::before`/`::after`)
+> antes de partir para o JS — você vai longe sem script nenhum.
 
 ---
 

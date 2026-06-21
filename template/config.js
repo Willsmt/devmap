@@ -28,4 +28,9 @@ export default {
   //   text: '#e6edf3',     // cor do texto
   //   radius: '16px',      // arredondamento dos cantos
   // },
+
+  // Folha de estilo PRÓPRIA (opcional): para um visual completamente diferente,
+  // além de cores. Carregada depois do widget.css, então sobrescreve o que
+  // quiser (layout, cards, animações). Veja o estilo.css de exemplo nesta pasta.
+  // stylesheet: './estilo.css',
 };

@@ -1,0 +1,60 @@
+/**
+ * estilo.css — Folha de estilo PRÓPRIA do roadmap (exemplo / ponto de partida).
+ *
+ * Como usar: aponte `stylesheet: './estilo.css'` no config.js deste roadmap.
+ * Este arquivo é carregado DEPOIS do core/widget.css, então qualquer regra
+ * aqui sobrescreve a base. Use os nomes de classe do widget.css como contrato:
+ *   .container .roadmap-header .xp-bar .stats .stat-card .badges .badge
+ *   .phase .phase__head .phase__body .topic .milestone .sync-bar
+ *
+ * ─────────────────────────────────────────────────────────────────────────
+ * AVISO IMPORTANTE
+ * Se o design/template que você quer copiar depende de EFEITOS EM JS
+ * (animações controladas por script, interações, comportamento dinâmico),
+ * só CSS não vai dar conta — você provavelmente vai precisar mexer também nas
+ * funções de render no index.html deste roadmap, e aí muda bem mais que o
+ * estilo.
+ *
+ * Boa estratégia: ABUSE do que o CSS puro já faz antes de partir pro JS.
+ * Dá para ir longe sem script nenhum — transições, animações (@keyframes),
+ * estados :hover/:focus/:checked, layouts com grid/flex, ::before/::after,
+ * gradientes, sombras... Esgote o CSS primeiro; só toque no JS quando o
+ * efeito realmente exigir lógica.
+ * ─────────────────────────────────────────────────────────────────────────
+ *
+ * Os exemplos abaixo estão comentados. Descomente e ajuste, ou apague tudo
+ * e escreva o seu (ou cole um que uma IA gerou).
+ */
+
+/* Exemplo 1 — cards de fase mais "elevados", com sombra e hover animado.
+.phase {
+  border-left-width: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.phase:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+*/
+
+/* Exemplo 2 — badges redondos em vez de cards quadrados.
+.badge {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+*/
+
+/* Exemplo 3 — barra de XP com brilho pulsante (animação só com CSS).
+.progress-fill {
+  animation: glow 2s ease-in-out infinite;
+}
+@keyframes glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.4); }
+}
+*/
