@@ -132,6 +132,27 @@ Veja o [CONTRIBUTING.md](CONTRIBUTING.md). Em resumo: copie `template/` para
 [`template/PROMPT_CLAUDE.md`](template/PROMPT_CLAUDE.md) e adicione o slug à
 lista na home (`index.html`).
 
+### Personalizando o visual
+
+O design base fica em [`core/widget.css`](core/widget.css), com os tokens de cor,
+espaçamento e arredondamento no `:root`. Há dois níveis de customização:
+
+- **Global** (todos os roadmaps + home): edite os tokens em `core/widget.css`.
+- **Por roadmap** (cada um com a própria cara): adicione um objeto `theme` ao
+  `config.js` daquele roadmap, sem tocar no core. As chaves são as variáveis CSS
+  sem o prefixo `--`:
+
+  ```js
+  export default {
+    id: 'meu-roadmap',
+    // ...
+    theme: { accent: '#a371f7', bg: '#0b0b14', radius: '16px' },
+  };
+  ```
+
+Quer um tema novo? Peça uma paleta para uma IA, cole o objeto `theme` no config
+e pronto — só aquele roadmap muda.
+
 ---
 
 ## Licença

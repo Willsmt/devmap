@@ -40,12 +40,14 @@
       } from '../../core/engine.js';
       import { load, saveProgress, saveNote, setToken } from '../../core/sheets.js';
       import { syncBar } from '../../core/sync-ui.js';
+      import { applyTheme } from '../../core/theme.js';
 
       const app = document.getElementById('app');
       const checked = new Set();
       const notes = new Map();
       let synced = false;
 
+      applyTheme(config);
       init();
 
       async function init() {
