@@ -26,7 +26,7 @@ O primeiro roadmap incluído é **Arquitetura de Software com Python** (5 fases,
 
 ```
 core/      → engine.js (lógica pura), sheets.js (persistência),
-             sync-ui.js (barra de sync), widget.css
+             sync-ui.js (barra de sync), theme.js (tema por roadmap), widget.css
 roadmaps/  → um roadmap por pasta (index.html + config.js + data.js)
 template/  → base para criar um roadmap novo
 sheets/    → Code.gs, o backend em Google Apps Script
@@ -39,9 +39,10 @@ index.html → home que lista os roadmaps
 
 ### 1. Faça o fork e habilite o GitHub Pages
 
-Faça fork deste repositório. Em **Settings → Pages**, defina o source como
-**GitHub Actions**. O workflow em `.github/workflows/deploy.yml` publica o site
-a cada push na branch principal.
+Faça fork deste repositório. Em **Settings → Pages → Source**, escolha
+**Deploy from a branch** e selecione a branch principal com a pasta `/ (root)`.
+O site é publicado a cada push — não há build (o `.nojekyll` garante que as
+pastas sejam servidas como estão).
 
 > Só quer testar localmente? Pule para o final: "Rodando localmente".
 
@@ -99,7 +100,7 @@ git commit -m "chore: configura minha planilha"
 git push
 ```
 
-O GitHub Actions publica em `https://<seu-usuario>.github.io/<repo>/`.
+O GitHub Pages publica em `https://<seu-usuario>.github.io/<repo>/`.
 
 ### 7. Conecte seus dispositivos
 
@@ -165,6 +166,22 @@ espaçamento e arredondamento no `:root`. Há dois níveis de customização:
 
   Há um [`template/estilo.css`](template/estilo.css) de exemplo para começar.
   Peça um CSS para uma IA, salve na pasta do roadmap, aponte no config e pronto.
+
+- **Card na home** (a listagem também reflete o roadmap): por padrão o card usa
+  o `accent` do `theme`. Para um card com gradiente próprio, defina `cardGradient`
+  (ou `cardAccent` para uma cor sólida) no config:
+
+  ```js
+  export default {
+    id: 'meu-roadmap',
+    // ...
+    cardGradient: 'linear-gradient(110deg, #22d3ee, #a855f7, #ec4899)',
+  };
+  ```
+
+O roadmap **Arquitetura de Software com IA** é um exemplo vivo de todos esses
+níveis juntos (`theme` + `stylesheet` + `cardGradient`) — compare-o com os
+outros para ver a mesma estrutura com uma cara totalmente diferente.
 
 > **Atenção:** se o design que você quer copiar depende de **efeitos em JS**
 > (animações por script, interações, comportamento dinâmico), só CSS não basta —

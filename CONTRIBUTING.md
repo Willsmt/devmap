@@ -21,9 +21,19 @@ export default {
   id: 'meu-roadmap',            // use o mesmo nome da pasta
   title: 'Meu Roadmap',
   subtitle: 'Uma linha descrevendo o roadmap.',
-  scriptUrl: '',                // sua URL do Apps Script, ou "" para localStorage
+  scriptUrl: '',               // URL do Apps Script, ou '' para localStorage
+
+  // Opcionais de personalização (detalhes em "Personalizando o visual" abaixo):
+  // theme: { accent: '#a371f7' },         // sobrescreve tokens só deste roadmap
+  // stylesheet: './estilo.css',           // folha de estilo própria (restyle total)
+  // cardGradient: 'linear-gradient(...)', // identidade do card na home
 };
 ```
+
+A sincronização com o Google Sheets é protegida por um **token** (`SCRIPT_TOKEN`,
+definido no Apps Script). Quem não tem o token usa o site em modo local e nunca
+escreve na planilha do dono. O passo a passo de publicação do backend está no
+[README](README.md).
 
 ### 3. Preencha o `data.js`
 
@@ -51,14 +61,34 @@ python -m http.server 8000   # abra http://localhost:8000/
 Marque tópicos, confira XP/badges e recarregue para garantir que o progresso
 persiste. Abra um Pull Request. 🚀
 
+## Personalizando o visual
+
+Sem tocar no `core/widget.css` (o tema base), cada roadmap pode ter a própria
+cara via `config.js`:
+
+- `theme` — sobrescreve tokens de design (cor, espaçamento, raio). As chaves são
+  as variáveis CSS sem o prefixo `--` (`accent`, `bg`, `surface`...).
+- `stylesheet` — uma folha de estilo própria, carregada depois do `widget.css`,
+  para um restyle **completo** (layout, animações). Use os nomes de classe como
+  contrato. Há um [`template/estilo.css`](template/estilo.css) de exemplo.
+- `cardGradient` / `cardAccent` — a identidade do card na home.
+
+O roadmap **Arquitetura de Software com IA** usa os três juntos como exemplo
+vivo. Detalhes e o aviso sobre designs que dependem de JS estão no
+[README](README.md#personalizando-o-visual).
+
 ## Princípios de arquitetura
 
 Mantenha a separação de responsabilidades ao mexer no core:
 
 - **`core/engine.js`** — só lógica pura. Sem DOM, sem `fetch`, sem
   `localStorage`. Funções que recebem dados e devolvem valores.
-- **`core/sheets.js`** — só persistência. Não conhece a UI. Nunca lança erro
-  para quem chama (fallback silencioso para localStorage).
+- **`core/sheets.js`** — só persistência (e o token). Não conhece a UI. Nunca
+  lança erro para quem chama (fallback silencioso para localStorage).
+- **`core/sync-ui.js`** — só a UI da barra de sincronização. Não fala com o
+  backend (isso é responsabilidade do `sheets.js`).
+- **`core/theme.js`** — só aplica o tema/`stylesheet` do config no `:root`. Sem
+  lógica de negócio.
 - **`data.js`** — só dados declarativos. Regras de badge são dados, não código.
 - **`index.html`** — só orquestração: monta o DOM e liga os eventos ao engine.
 
