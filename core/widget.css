@@ -107,6 +107,29 @@ a:hover {
   transition: width 0.4s ease;
 }
 
+/* ----------------------------- Completion bar ---------------------------- */
+
+.completion-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: var(--gap);
+}
+.completion-bar__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.completion-bar__label {
+  font-weight: 700;
+}
+.completion-bar__pct {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
 /* ------------------------------- Stat cards ------------------------------ */
 
 .stats {
