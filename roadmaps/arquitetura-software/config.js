@@ -13,5 +13,6 @@ export default {
   id: 'arquitetura-software',
   title: 'Arquitetura de Software com Python',
   subtitle: 'Do código limpo à liderança técnica — 5 fases, 20 tópicos.',
-  scriptUrl: '',
+  scriptUrl:
+    'https://script.google.com/macros/s/AKfycbwVjP78qMRMP6GuP9LEWC_xBj8aKIdQFb-3MrY88PwyhQIMsBmTTBZiMn3lOZoUuvxp/exec',
 };
