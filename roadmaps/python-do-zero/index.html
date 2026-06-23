@@ -76,6 +76,7 @@
           })
         );
         app.appendChild(xpBar());
+        app.appendChild(completionBar());
         app.appendChild(statsGrid());
         app.appendChild(badgesGrid());
         app.appendChild(phasesSection());
@@ -98,6 +99,18 @@
             <span class="xp-bar__xp" data-xp></span>
           </div>
           <div class="progress-track"><div class="progress-fill" data-xp-fill></div></div>`;
+        return el;
+      }
+
+      function completionBar() {
+        const el = document.createElement('div');
+        el.className = 'completion-bar';
+        el.innerHTML = `
+          <div class="completion-bar__head">
+            <span class="completion-bar__label">Progresso geral</span>
+            <span class="completion-bar__pct" data-completion-pct></span>
+          </div>
+          <div class="progress-track"><div class="progress-fill" data-completion-fill></div></div>`;
         return el;
       }
 
@@ -227,6 +240,10 @@
         app.querySelector('[data-xp]').textContent =
           `${xp} XP · ${level.xpIntoLevel}/${level.xpForNextLevel} p/ próximo`;
         app.querySelector('[data-xp-fill]').style.width = `${level.progressPct}%`;
+
+        app.querySelector('[data-completion-pct]').textContent =
+          `${progress.completed}/${progress.total} · ${progress.pct}%`;
+        app.querySelector('[data-completion-fill]').style.width = `${progress.pct}%`;
 
         setStat('completed', progress.completed);
         setStat('total', progress.total);
